@@ -38,6 +38,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/tasks/{taskId}/categories', [TaskController::class, 'getTaskCategories']);
     Route::get('/tasks/{taskId}/users', [TaskController::class, 'getUsersForTask']);
     Route::get('/dashboard', [TaskController::class, 'dashboard']);
+    Route::get('users', [UserController::class, 'index']);
+    Route::get('/dashboard', [TaskController::class, 'dashboardStatistics']);
+
 });
 
 

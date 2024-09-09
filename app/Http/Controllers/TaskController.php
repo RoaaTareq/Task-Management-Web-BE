@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Category; // 
 use App\Events\TaskUpdated;
 class TaskController extends Controller
 {
@@ -118,6 +119,46 @@ public function destroy(Task $task)
 
     return response()->json(['message' => 'Task deleted']);
 }
+public function dashboardStatistics()
+{
+    $totalTasks = Task::count();
+    $completedTasks = Task::where('is_completed', true)->count();
+    $pendingTasks = Task::where('is_completed', false)->count();
+
+    // Task Priority Statistics
+    $priorityStatistics = [
+        'low' => Task::where('priority', 'low')->count(),
+        'medium' => Task::where('priority', 'medium')->count(),
+        'high' => Task::where('priority', 'high')->count(),
+    ];
+
+    // Category Usage Statistics
+    $tasksPerCategory = Category::withCount('tasks')->get()->pluck('tasks_count', 'name');
+
+    return response()->json([
+        'total_tasks' => $totalTasks,
+        'completed_tasks' => $completedTasks,
+        'pending_tasks' => $pendingTasks,
+        'priority_statistics' => $priorityStatistics,
+        'tasks_per_category' => $tasksPerCategory
+    ]);
+
+
+        // Task Priority Statistics
+        $priorityStats = [
+            'low' => Task::where('priority', 'low')->count(),
+            'medium' => Task::where('priority', 'medium')->count(),
+            'high' => Task::where('priority', 'high')->count(),
+        ];
+
+        // Category Usage Statistics
+        $categoryStats = Category::withCount('tasks')->get();
+
+        return response()->json([
+            'priority_stats' => $priorityStats,
+            'category_stats' => $categoryStats
+        ]);
+    }
 }
 
 ?>
