@@ -21,43 +21,43 @@ class TaskController extends Controller
     }
     
     public function store(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'due_date' => 'required|date',
-        'priority' => 'required|in:low,medium,high',
-        'categories' => 'array|nullable',
-        'assigned_users' => 'array|nullable', // Validate array of user IDs
-        'assigned_users.*' => 'exists:users,id', // Validate each user ID
-    ]);
-
-    // Get the currently authenticated user ID
-    $userId = auth()->id();
-
-    if (!$userId) {
-        return response()->json(['error' => 'User not authenticated'], 401);
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'due_date' => 'required|date',
+            'priority' => 'required|in:low,medium,high',
+            'category_id' => 'required|exists:categories,id', // Validate category_id
+            'is_completed' => 'required|boolean', // Validate is_completed
+            'assigned_users' => 'array|nullable', // Validate array of user IDs
+            'assigned_users.*' => 'exists:users,id', // Validate each user ID
+        ]);
+    
+        // Get the currently authenticated user ID
+        $userId = auth()->id();
+    
+        if (!$userId) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+    
+        // Create the task and associate it with the authenticated user
+        $task = Task::create([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'due_date' => $request->input('due_date'),
+            'priority' => $request->input('priority'),
+            'category_id' => $request->input('category_id'), // Store category_id
+            'is_completed' => $request->input('is_completed'), // Store is_completed status
+            'user_id' => $userId,  // Set the user_id here
+        ]);
+    
+        if ($request->has('assigned_users')) {
+            $task->assignedUsers()->sync($request->input('assigned_users')); // Sync assigned users
+        }
+    
+        return response()->json($task, 201);
     }
-
-    // Create the task and associate it with the authenticated user
-    $task = Task::create([
-        'title' => $request->input('title'),
-        'description' => $request->input('description'),
-        'due_date' => $request->input('due_date'),
-        'priority' => $request->input('priority'),
-        'user_id' => $userId,  // Set the user_id here
-    ]);
-
-    if ($request->has('categories')) {
-        $task->categories()->sync($request->input('categories'));
-    }
-
-    if ($request->has('assigned_users')) {
-        $task->assignedUsers()->sync($request->input('assigned_users')); // Sync assigned users
-    }
-
-    return response()->json($task, 201);
-}
+    
 
 
 public function getTaskCategories($taskId)

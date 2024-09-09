@@ -33,13 +33,12 @@
 
 // ];
 return [
-    'paths' => ['api/*'],
-    'allowed_methods' => ['*'],
-    'allowed_origins' => ['http://localhost:3000'], // Allow the origin of your React app
-    'allowed_origins_patterns' => [],
-    'allowed_headers' => ['*'],
-    'exposed_headers' => [],
-    'max_age' => 0,
-    'supports_credentials' => true,
+'paths' => ['api/*'],
+'allowed_methods' => ['*'],
+'allowed_origins' => ['*'], // Replace * with the exact URL of your frontend if needed
+'allowed_headers' => ['*'],
+'exposed_headers' => [],
+'max_age' => 0,
+'supports_credentials' => false,
 ];
 

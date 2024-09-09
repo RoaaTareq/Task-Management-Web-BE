@@ -38,10 +38,20 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
-        'api' => [
+//         'api' => [
+//     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+//     'throttle:api',
+//     \Illuminate\Routing\Middleware\SubstituteBindings::class,
+// ],
+'api' => [
     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
     'throttle:api',
     \Illuminate\Routing\Middleware\SubstituteBindings::class,
+    \App\Http\Middleware\EncryptCookies::class,
+    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+    \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+    \Tymon\JWTAuth\Http\Middleware\Authenticate::class, // JWT middleware
 ],
 
     ];
