@@ -30,6 +30,6 @@ Route::get('/users/non-admins', [UserController::class, 'getNonAdminUsers']);
 
 
 Route::middleware('auth:api')->group(function () {
-    Route::resource('tasks', TaskController::class);
+    Route::post('/tasks', [TaskController::class, 'store']);
 });
 
