@@ -32,12 +32,14 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api')
 
 Route::get('/categories', [CategoryController::class, 'index']);
 
-Route::middleware('auth:sanctum')->group(function () {
+
+Route::middleware('auth:api')->group(function () {
     Route::resource('tasks', TaskController::class);
     Route::get('/tasks/{taskId}/categories', [TaskController::class, 'getTaskCategories']);
     Route::get('/tasks/{taskId}/users', [TaskController::class, 'getUsersForTask']);
+    Route::get('/dashboard', [TaskController::class, 'dashboard']);
 });
 
-Route::middleware('auth:sanctum');
+
 
 
