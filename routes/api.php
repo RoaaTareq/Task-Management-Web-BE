@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
+
 
 
 
@@ -19,9 +23,26 @@ use App\Http\Controllers\AuthController;
 */
 
 // routes/api.php
+
+// routes/api.php
+
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
+
+Route::get('/categories', [CategoryController::class, 'index']);
+
+
 Route::middleware('auth:api')->group(function () {
-    // Protected routes go here
+    Route::resource('tasks', TaskController::class);
+    Route::get('/tasks/{taskId}/categories', [TaskController::class, 'getTaskCategories']);
+    Route::get('/tasks/{taskId}/users', [TaskController::class, 'getUsersForTask']);
+    Route::get('/dashboard', [TaskController::class, 'dashboard']);
+    Route::get('users', [UserController::class, 'index']);
+    Route::get('/dashboard', [TaskController::class, 'dashboardStatistics']);
+
 });
+
+
+
 
