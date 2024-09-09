@@ -13,9 +13,12 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = Task::where('user_id', Auth::id())->get();
+       
+        $tasks = Task::all();
+        
         return response()->json($tasks);
     }
+    
     public function store(Request $request)
 {
     $request->validate([
@@ -105,17 +108,16 @@ public function getUsersForTask($taskId)
     return response()->json($task);
 }
 
-    public function destroy(Task $task)
-    {
-        if ($task->user_id != Auth::id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        $task->delete();
-
-        return response()->json(['message' => 'Task deleted']);
+public function destroy(Task $task)
+{
+    if ($task->user_id != Auth::id()) {
+        return response()->json(['error' => 'Unauthorized'], 403);
     }
-}
 
+    $task->delete();
+
+    return response()->json(['message' => 'Task deleted']);
+}
+}
 
 ?>
