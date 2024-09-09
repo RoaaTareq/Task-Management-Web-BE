@@ -2,23 +2,33 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
+use App\Models\Task;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\BroadcastOn;
+use Illuminate\Broadcasting\BroadcastEvent;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class TaskUpdated
+class TaskUpdated implements ShouldBroadcastNow
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable, InteractsWithSockets;
 
     public $task;
 
-    public function __construct($task)
+    public function __construct(Task $task)
     {
         $this->task = $task;
     }
 
     public function broadcastOn()
     {
-        return new Channel('tasks.' . $this->task->user_id);
+        return new PrivateChannel('tasks.' . $this->task->id);
+    }
+
+    public function broadcastWith()
+    {
+        return ['task' => $this->task];
     }
 }

@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Broadcast;
 | used to check if an authenticated user can listen to the channel.
 |
 */
+use App\Models\Task;
+
+Broadcast::channel('tasks.{taskId}', function ($user, $taskId) {
+    return $user->id === Task::find($taskId)->user_id; // Check if the user is authorized
+});
+
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
