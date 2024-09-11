@@ -30,13 +30,15 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
-Route::get('/categories', [CategoryController::class, 'index']);
+
 
 
 Route::middleware('auth:api')->group(function () {
     Route::resource('tasks', TaskController::class);
     Route::get('/tasks/{taskId}/categories', [TaskController::class, 'getTaskCategories']);
     Route::get('/tasks/{taskId}/users', [TaskController::class, 'getUsersForTask']);
+    Route::get('/tasks/{taskId}', [TaskController::class, 'getTaskById']);
+    Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/dashboard', [TaskController::class, 'dashboard']);
     Route::get('users', [UserController::class, 'index']);
     Route::get('/dashboard', [TaskController::class, 'dashboardStatistics']);
