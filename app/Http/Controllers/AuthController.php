@@ -1,49 +1,58 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use Validator;
 
 class AuthController extends Controller
 {
     public function __construct()
-{
-    $this->middleware('auth:api');
-}
+    {
+        // Allow register and login methods to be accessed publicly
+        $this->middleware('auth:api', ['except' => ['register', 'login']]);
+    }
+
     public function register(Request $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required'
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
 
         $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password'))
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
-        // Return the token
-        return response()->json(['token' => JWTAuth::fromUser($user)]);
+        // Generate a JWT token for the user
+        $token = JWTAuth::fromUser($user);
+      
+
+        return response()->json(['token' => $token], 201);
     }
 
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
-    
-        if (!$token = auth()->attempt($credentials)) {
+
+        if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         return $this->respondWithToken($token);
     }
-    
+
     protected function respondWithToken($token)
     {
         return response()->json([
@@ -52,11 +61,10 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
-    
-    public function logout(Request $request)
+
+    public function logout()
     {
-        // Invalidate the token
-        JWTAuth::invalidate(JWTAuth::getToken());
-        return response()->json(['message' => 'Logged out']);
+        Auth::logout();
+        return response()->json(['message' => 'Successfully logged out']);
     }
 }

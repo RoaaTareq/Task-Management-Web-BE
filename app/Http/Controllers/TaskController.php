@@ -59,7 +59,13 @@ class TaskController extends Controller
     }
     
 
-
+    public function getTaskById($taskId)
+    {
+        $task = Task::with(['categories', 'assignedUsers'])->findOrFail($taskId);
+    
+        return response()->json($task, 200);
+    }
+    
 public function getTaskCategories($taskId)
 {
     $task = Task::findOrFail($taskId);

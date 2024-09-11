@@ -34,11 +34,15 @@
 // ];
 return [
 'paths' => ['api/*'],
-'allowed_methods' => ['*'],
-'allowed_origins' => ['*'], // Replace * with the exact URL of your frontend if needed
-'allowed_headers' => ['*'],
+'allowed_methods' => ['*'], // Allow all methods
+'allowed_origins' => ['http://localhost:3000', 'http://localhost:3001'], // Allow both origins
+'allowed_origins_patterns' => [],
+'allowed_headers' => ['*'], // Allow all headers
 'exposed_headers' => [],
 'max_age' => 0,
 'supports_credentials' => false,
+
+
+
 ];
 

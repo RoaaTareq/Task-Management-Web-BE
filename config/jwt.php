@@ -187,6 +187,8 @@ return [
     | a little on token size.
     |
     */
+    'blacklist_enabled' => false,
+
 
     'lock_subject' => true,
 
